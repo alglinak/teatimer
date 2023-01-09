@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css"/>
+		<link rel="icon" href="https://cdn.pixabay.com/photo/2013/07/13/10/12/drink-156743_960_720.png">
+		<title>Tea</title>
+	</head>
+
+	<body class="w-100">
+
+			<div class="fl w-100 pa2 center">
+				<h2 class="f5 f4-m f3-l fw2 black-50 mt0 lh-copy">Tea Timer</h2> 
+			</div>
+
+			<div class="fl w-100 pa2 center">
+				<label class="f5 lh-copy measure"> Duration (in minutes) </label>
+				<br />
+				<select id="time-selection" class="f5 lh-copy measure" onchange= "selectedTime()" style="width: 150px;">
+					<option value="240000"> 4 </option>  
+					<option value="180000"> 3 </option>  
+					<option value="120000"> 2 </option>
+					<option value="2000"> -- higher -- </option>
+					<option value="600000"> 10 </option> 
+					<option value="540000"> 9 </option> 
+					<option value="480000"> 8 </option> 
+					<option value="420000"> 7 </option> 
+					<option value="360000"> 6 </option> 
+					<option value="360000"> 5 </option> 
+				</select>
+				<br />
+				<label class="pa0 ma0 lh-copy f6 pointer">
+					<input type="checkbox" id="sound" > Audio alert</label>
+				</label>
+			</div>
+			
+
+			<div class="fl w-100 pa2">
+				<button id="teabutton" class="f6 link dim br1 ba ph3 pv2 mb2 dib black" style="width:150px;" 
+						onclick="setTimeout(timedOut, parseInt(getCountdown()));">
+					⏱ Start
+				</button>
+			</div>
+			<div class="fl w-100 pa2">
+				<button id="resetbutton" class="f6 link dim br1 ba ph3 pv2 mb2 dib black" style="width:150px;" 
+						onclick="resetFunction();">
+					✖️ Reset
+				</button>
+			</div>
+			
+			<div class="fl w-100 pa2">
+				<progress id="progress-icon" max="100" style="width:150px; visibility:hidden;" ></progress>
+			</div>
+			<div class="fl w-100 pa2">
+				<label id="start-time-date" class="f5 lh-copy measure"></label>
+			</div>
+			<div class="fl w-100 pa2">
+				<label id="alert-message" class="f5 lh-copy measure"></label>
+			</div>
+		
+			
+			<!-- Monitoring area -->
+			<div class="fl w-100 pa2">
+				<label style="visibility:hidden">
+					Individual time
+				</label>
+				<br />
+				<input id="teatime" style="width: 145px; visibility: hidden;" value=240000></input>
+			</div>
+
+
+
+
+		<script>
+			// Global variables
+			//	>> used to add audio-reminder when time is up
+			var global_sound = new Audio("https://cdn.pixabay.com/audio/2022/03/15/audio_494453922b.mp3");
+		
+			// Events
+			//	>> on click event (start timer)
+			document.getElementById("teabutton").addEventListener("click", function(){
+				document.title = "☕ Tea ..."
+				document.getElementById("progress-icon").style.visibility = "visible";
+				document.getElementById("teabutton").style.visibility = "hidden";
+				document.getElementById("start-time-date").innerHTML = "Started: " + getTime();
+				}
+			);
+			
+			// dropdown
+			function selectedTime(){
+				var timeList = document.getElementById("time-selection");
+				document.getElementById("teatime").value = timeList.options[timeList.selectedIndex].value;
+			}
+			
+			// tasks to do, once the timer timed out
+			function timedOut() {
+				document.body.style.background = "#32CD32"; 
+				document.title = "✅ Ready"
+				document.getElementById("start-time-date").innerHTML = "";
+				document.getElementById("alert-message").innerHTML = "☕ pick up your tea ️☕";
+				document.getElementById("teabutton").style.visibility = "hidden";
+				document.getElementById("progress-icon").style.visibility = "hidden";
+				
+				// play sound
+				if(document.getElementById("sound").checked){
+					global_sound.play();
+				}
+			}
+			
+			// manually reset to default configuration
+			function resetFunction() {
+				document.body.style.background = "white"; 
+				document.title = "Tea ???"
+				document.getElementById("teabutton").style.visibility = "visible";
+				document.getElementById("alert-message").innerHTML = "";
+				document.getElementById("start-time-date").innerHTML = "";
+				document.getElementById("progress-icon").style.visibility = "hidden";
+				
+				
+				let resetTime = document.getElementById("time-selection");
+				resetTime.value = 240000;
+				document.getElementById("teatime").value = 240000;
+				
+				// stop sound
+				global_sound.pause();
+				
+			}
+
+			// helper method to get the time to count down
+			function getCountdown()
+			{
+				/** * 60000 = 1 minute */
+				var timeList = document.getElementById("time-selection");		
+				return timeList.options[timeList.selectedIndex].value;
+			}
+			
+			// helper method to get the time (hour, minute, second)
+			function getTime()
+			{
+				var today = new Date();
+				var _hrs = "";
+				var _mins = "";
+				var _secs = "";
+				
+				if (today.getHours() < 10){
+					_hrs = "0" + today.getHours();
+				}
+				else{
+					_hrs = today.getHours();
+				}					
+					
+				if (today.getMinutes() < 10){
+					_mins = "0" + today.getMinutes();
+				} 
+				else{
+					_mins = today.getMinutes();
+				}
+					
+				if (today.getSeconds() < 10){
+					_secs = "0" + today.getSeconds();
+				}
+				else{
+					_secs = today.getSeconds();
+				}
+					
+					
+				console.log(_hrs + ":" + _mins + ":" + _secs);
+				
+				var time = _hrs + ":" + _mins + ":" + _secs;
+				return time;
+			}
+
+		</script>
+	</body>
+</html>
